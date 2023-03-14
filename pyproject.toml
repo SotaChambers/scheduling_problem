@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "scheduling-problem"
+version = "0.1.0"
+description = "scheduling problem by quantum annealing and simulated quantum annealing"
+authors = ["SotaChambers <snakamura@ridge-i.com>"]
+packages = [{include = "utils"}, {include = "model"}]
+
+[tool.poetry.dependencies]
+python = ">=3.9,<3.11"
+dwave-ocean-sdk = "^6.3.0"
+openjij = "^0.6.14"
+pyqubo = "^1.4.0"
+matplotlib = "^3.7.1"
+seaborn = "^0.12.2"
+japanize-matplotlib = "^1.1.3"
+pyyaml = "^6.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
