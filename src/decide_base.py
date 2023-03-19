@@ -4,6 +4,8 @@ from openjij import SQASampler
 import seaborn as sns
 import matplotlib.pyplot as plt
 import japanize_matplotlib
+from loguru import logger
+import time
 
 from utils.utils import load_yaml
 from utils.stop_watch import stop_watch
@@ -28,6 +30,9 @@ def make_plot(data_list, x, save_path, labels, x_label, y_label):
 
 @stop_watch
 def main():
+    # ======= logの設定
+    dt_now = time.strftime("%Y%m%d_%H-%M-%S")
+    logger.add(f"logs/{dt_now}.log", rotation="500MB") 
 
     # ======= 問題の設定
     parameter = Parameter()

@@ -1,4 +1,5 @@
 import time
+from loguru import logger
 
 
 def stop_watch(f):
@@ -8,6 +9,6 @@ def stop_watch(f):
         start = time.time()
         result = f(*args, **kargs)
         elapsed_time = time.time() - start
-        print(f"{f.__qualname__} took {round(elapsed_time, 3)} seconds")
+        logger.info(f"{f.__qualname__} took {round(elapsed_time, 3)} seconds")
 
     return _stop_watch
