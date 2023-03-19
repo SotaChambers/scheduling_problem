@@ -32,7 +32,7 @@ def make_plot(data_list, x, save_path, labels, x_label, y_label):
 def main():
     # ======= logの設定
     dt_now = time.strftime("%Y%m%d_%H-%M-%S")
-    logger.add(f"logs/{dt_now}.log", rotation="500MB") 
+    logger.add(f"logs/{dt_now}.log", rotation="500MB")
 
     # ======= 問題の設定
     parameter = Parameter()
@@ -44,7 +44,7 @@ def main():
         parameter.S_dt,
         parameter.R_a,
         parameter.G_ga,
-        parameter.r_adt
+        parameter.r_adt,
     )
     model = qubo_model.create_model()
 
@@ -66,7 +66,9 @@ def main():
         sampler = select_sampler(parameter.config["algorithm"])
         sampleset = sampler.sample_qubo(qubo, num_reads=parameter.config["num_reads"])
 
-        decode_samples = model.decode_sampleset(sampleset=sampleset, feed_dict=feed_dict)
+        decode_samples = model.decode_sampleset(
+            sampleset=sampleset, feed_dict=feed_dict
+        )
         success_num = 0
         for sample in decode_samples:
             if len(sample.constraints(only_broken=True)) == 0:
@@ -77,7 +79,6 @@ def main():
         max_energy_list.append(np.max(sampleset.energies))
 
     result_list_percent = [i / parameter.config["num_reads"] for i in result_list]
-    
 
     make_plot(
         [result_list_percent],
@@ -85,7 +86,7 @@ def main():
         parameter.config["output"]["base_test"],
         ["solution rate"],
         x_label="base",
-        y_label="solution rate"
+        y_label="solution rate",
     )
     make_plot(
         [min_energy_list, mean_energy_list, max_energy_list],
@@ -93,9 +94,8 @@ def main():
         parameter.config["output"]["enegry"],
         ["min", "mean", "max"],
         x_label="base",
-        y_label="enegry"
+        y_label="enegry",
     )
-    
 
 
 if __name__ == "__main__":

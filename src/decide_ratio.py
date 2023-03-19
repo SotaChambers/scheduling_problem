@@ -3,11 +3,9 @@ from pyqubo import Array, Constraint, Placeholder, Binary
 from openjij import SQASampler
 import seaborn as sns
 import matplotlib.pyplot as plt
-import japanize_matplotlib
 from loguru import logger
 import time
 
-from utils.utils import load_yaml
 from utils.stop_watch import stop_watch
 from model.model import QuboModel
 from src.common.setting_parameter import Parameter
@@ -17,8 +15,8 @@ from model.sampler import select_sampler
 def make_heatmap(map, axis_list, save_path):
     fig = plt.figure(figsize=(14, 14))
     sns.heatmap(map, annot=True)
-    plt.xticks([i+0.5 for i in range(len(axis_list))], axis_list)
-    plt.yticks([i+0.5 for i in range(len(axis_list))], axis_list)
+    plt.xticks([i + 0.5 for i in range(len(axis_list))], axis_list)
+    plt.yticks([i + 0.5 for i in range(len(axis_list))], axis_list)
     plt.xlabel("w_group")
     plt.ylabel("w_desire")
     fig.savefig(save_path)
@@ -28,11 +26,10 @@ def make_heatmap(map, axis_list, save_path):
 def main():
     # ======= logの設定
     dt_now = time.strftime("%Y%m%d_%H-%M-%S")
-    logger.add(f"logs/{dt_now}.log", rotation="500MB") 
+    logger.add(f"logs/{dt_now}.log", rotation="500MB")
 
     # ======= 問題の設定
     parameter = Parameter()
-
 
     qubo_model = QuboModel(
         parameter.A,
@@ -41,7 +38,7 @@ def main():
         parameter.S_dt,
         parameter.R_a,
         parameter.G_ga,
-        parameter.r_adt
+        parameter.r_adt,
     )
     model = qubo_model.create_model()
 
@@ -55,9 +52,13 @@ def main():
             qubo, offset = model.to_qubo(feed_dict=feed_dict)
 
             sampler = select_sampler(parameter.config["algorithm"])
-            sampleset = sampler.sample_qubo(qubo, num_reads=parameter.config["num_reads"])
+            sampleset = sampler.sample_qubo(
+                qubo, num_reads=parameter.config["num_reads"]
+            )
 
-            decode_samples = model.decode_sampleset(sampleset=sampleset, feed_dict=feed_dict)
+            decode_samples = model.decode_sampleset(
+                sampleset=sampleset, feed_dict=feed_dict
+            )
             success_num = 0
             for sample in decode_samples:
                 if len(sample.constraints(only_broken=True)) == 0:
@@ -66,7 +67,9 @@ def main():
 
     result_map_percent = result_map / parameter.config["num_reads"]
 
-    make_heatmap(result_map_percent, test_case, parameter.config["output"]["coeff_test"])
+    make_heatmap(
+        result_map_percent, test_case, parameter.config["output"]["coeff_test"]
+    )
 
 
 if __name__ == "__main__":

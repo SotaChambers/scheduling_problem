@@ -10,7 +10,7 @@ def load_yaml(path: str) -> Dict:
     Returns:
         Dict: yamlファイルの中身
     """
-    with open(path, 'r', encoding="utf-8") as yml:
+    with open(path, "r", encoding="utf-8") as yml:
         config = yaml.safe_load(yml)
 
     return config

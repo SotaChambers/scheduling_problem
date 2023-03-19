@@ -35,13 +35,19 @@ def make_schedule(data, save_path, x_label, y_label, no_d, no_t, A, D, T):
 def main():
     # ======= logの設定
     dt_now = time.strftime("%Y%m%d_%H-%M-%S")
-    logger.add(f"logs/{dt_now}.log", rotation="500MB") 
+    logger.add(f"logs/{dt_now}.log", rotation="500MB")
 
     # ======= 問題の設定
     parameter = Parameter()
 
-    w_desire = parameter.config["coeff"]["w_desire"]["ratio"] * parameter.config["coeff"]["base"]
-    w_group = parameter.config["coeff"]["w_group"]["ratio"] * parameter.config["coeff"]["base"]
+    w_desire = (
+        parameter.config["coeff"]["w_desire"]["ratio"]
+        * parameter.config["coeff"]["base"]
+    )
+    w_group = (
+        parameter.config["coeff"]["w_group"]["ratio"]
+        * parameter.config["coeff"]["base"]
+    )
 
     qubo_model = QuboModel(
         parameter.A,
@@ -50,7 +56,7 @@ def main():
         parameter.S_dt,
         parameter.R_a,
         parameter.G_ga,
-        parameter.r_adt
+        parameter.r_adt,
     )
     model = qubo_model.create_model()
     feed_dict = {"w_desire": w_desire, "w_group": w_group}
@@ -69,13 +75,15 @@ def main():
             pass_constraint.append(i)
 
     # 制約が満たされた解で最もエネルギーが小さいsampleを抽出
-    use_idx = pass_constraint[
-        np.argmin(energies[pass_constraint])
-    ]
+    use_idx = pass_constraint[np.argmin(energies[pass_constraint])]
     logger.info(f"Min Enegry = {energies[use_idx]}, idx = {use_idx}")
 
-    target_sample = sampleset.record[use_idx][0].reshape(parameter.no_a, parameter.no_d * parameter.no_t)
-    base_schedule = np.zeros(shape=(parameter.no_a * 2 - 1, parameter.no_d * parameter.no_t))
+    target_sample = sampleset.record[use_idx][0].reshape(
+        parameter.no_a, parameter.no_d * parameter.no_t
+    )
+    base_schedule = np.zeros(
+        shape=(parameter.no_a * 2 - 1, parameter.no_d * parameter.no_t)
+    )
     for i, schedule in enumerate(target_sample):
         base_schedule[2 * i, :] = schedule
 
@@ -88,7 +96,7 @@ def main():
         parameter.no_t,
         parameter.A,
         parameter.D,
-        parameter.T
+        parameter.T,
     )
 
 
