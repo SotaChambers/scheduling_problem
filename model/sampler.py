@@ -12,7 +12,8 @@ def select_sampler(algorithm):
         endpoint = credential_cfg["ENDPOINT"]
         # ソルバーの定義
         dw_sampler = DWaveSampler(
-            solver="DW_2000Q_6",
+            # solver="DW_2000Q_6",
+            solver="Advantage_system4.1",
             token=token,
             endpoint=endpoint
         )

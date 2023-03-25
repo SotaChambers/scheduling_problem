@@ -66,7 +66,11 @@ def main():
     sampler = select_sampler(parameter.config["algorithm"])
     sampleset = sampler.sample_qubo(qubo, num_reads=parameter.config["num_reads"])
 
-    energies = sampleset.energies
+    # OpenJijのResponseクラスには "energies" が存在するが，dimodにはないので自作する
+    if parameter.config["algorithm"] == "SQA":
+        energies = sampleset.energies
+    else:
+        energies = np.array([sample[1] for sample in sampleset.record])
 
     decode_samples = model.decode_sampleset(sampleset=sampleset, feed_dict=feed_dict)
     pass_constraint = []
@@ -75,6 +79,8 @@ def main():
             pass_constraint.append(i)
 
     # 制約が満たされた解で最もエネルギーが小さいsampleを抽出
+    assert len(pass_constraint) != 0, "制約を満たす解がありません"
+        
     use_idx = pass_constraint[np.argmin(energies[pass_constraint])]
     logger.info(f"Min Enegry = {energies[use_idx]}, idx = {use_idx}")
 
