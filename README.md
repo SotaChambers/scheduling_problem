@@ -1,26 +1,28 @@
-# system requirements
+# システム要件
 
 ```txt
 python = >=3.9, <3.11
 poetry = ^1.2.2
 ```
 
-# Creating a virtual environment
+# 仮想環境の作成
 
 ```bash
 poetry install
 poetry shell
 ```
 
-# D-Wave: Procedure
+# D-Wave: 手順
 
-1. Create a D-Wave Leap account
+1. a D-Wave Leap のアカウントを作成
 https://cloud.dwavesys.com/leap/login/
-2. Note your API Token in Dashborad
+2. Dashborad にあるAPI Token をメモ
+configの `d-wave_credential_example.yml` を `d-wave_credential.yml` に変更し，TOKEN にAPI TOKEN を貼り付ける
 
-# formulation
-
-## Constant
+# 定式化
+問題設定は以下の論文を参考
+[Applying Quantum Annealing for Shift Scheduling Problem for Call Centers](https://www.jstage.jst.go.jp/article/ijnc/13/1/13_2/_pdf/-char/ja)
+## 定数
 - $A$ : 作業員の集合
   - {作業員1, …, 作業員a}
 - $D$ : スケジュール対象日の集合
@@ -32,11 +34,11 @@ https://cloud.dwavesys.com/leap/login/
 - $G_{ga} \in \{0, 1\}$ : グループ $g$ に作業員 $a$ が所属しているかいないかのバイナリ定数
 - $r_{adt} \in \{0, 1\}$ : 作業員 $a$ が $d$ 日のターム $t$ へ割り当て可能かを表すバイナリ定数
 
-## Variable
+## 変数
 - $x_{adt} \in \{0, 1\}$ : 作業員 $a$ が $d$ 日のターム $t$ に割り振られたか
 
 
-## Constraint
+## 制約条件
 - 作業員が希望していないターム( $r_{adt}=0$ )にはシフトを割り振らない
 $r_{adt} = 0$ の場合，以下を満たす
 ```math
@@ -47,7 +49,7 @@ $r_{adt} = 0$ の場合，以下を満たす
 \forall a\in A, \forall d\in D, \forall g : \sum_{a} x_{adt} * G_{ga} = \sum_{a}G_{ga}
 ```
 
-## Objective Function
+## 目的関数
 - 希望ブース数と割り当てられる作業員数が近い
 ```math
 \sum_{dt}(\sum_{a}x_{adt} - S_{dt})
@@ -58,7 +60,21 @@ $r_{adt} = 0$ の場合，以下を満たす
 ```
 
 
-実行
-ratio: 10分程度
-base: 1分程度
-opt: 2sくらい
+# 実行
+## ペナルティ係数の Ratio を決める
+SQAで実行すると 10分 程度かかる．`graph/coeff_ratio.png` にヒートマップが出力される
+```bash
+python src/decide_ratio.py
+```
+
+## ペナルティ係数の base を決める
+SQAで実行すると 1分 程度かかる．`graph/coeff_base.png` に実行可能確率とエネルギー図が出力される．
+```bash
+python src/decide_base.py
+```
+
+## スケジュールを算出
+`graph/schedule.png` にスケジュールが出力される
+```bash
+python src/optimize.py
+```
