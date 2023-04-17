@@ -14,13 +14,13 @@ poetry shell
 
 # D-Wave: 手順
 
-1. a D-Wave Leap のアカウントを作成
+1. a D-Wave Leap のアカウントを作成<br>
 https://cloud.dwavesys.com/leap/login/
-2. Dashborad にあるAPI Token をメモ
+2. Dashborad にあるAPI Token をメモ<br>
 configの `d-wave_credential_example.yml` を `d-wave_credential.yml` に変更し，TOKEN にAPI TOKEN を貼り付ける
 
 # 定式化
-問題設定は以下の論文を参考
+問題設定は以下の論文を参考<br>
 [Applying Quantum Annealing for Shift Scheduling Problem for Call Centers](https://www.jstage.jst.go.jp/article/ijnc/13/1/13_2/_pdf/-char/ja)
 ## 定数
 - $A$ : 作業員の集合
