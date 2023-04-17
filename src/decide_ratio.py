@@ -27,6 +27,7 @@ def main():
     # ======= logの設定
     dt_now = time.strftime("%Y%m%d_%H-%M-%S")
     logger.add(f"logs/{dt_now}.log", rotation="500MB")
+    logger.info(f"Start deciding coefficient ratio of penalty")
 
     # ======= 問題の設定
     parameter = Parameter()
@@ -40,6 +41,7 @@ def main():
         parameter.G_ga,
         parameter.r_adt,
     )
+    logger.info(f"setting Sampler: Sampler = {parameter.config['algorithm']}")
     model = qubo_model.create_model()
 
     test_case = [i * 0.5 for i in range(1, 20)]
@@ -51,6 +53,7 @@ def main():
             feed_dict = {"w_desire": test_case[w_desire], "w_group": test_case[w_group]}
             qubo, offset = model.to_qubo(feed_dict=feed_dict)
 
+            logger.info(f"w_desire = {test_case[w_desire]}, w_group = {test_case[w_group]}")
             sampler = select_sampler(parameter.config["algorithm"])
             sampleset = sampler.sample_qubo(
                 qubo, num_reads=parameter.config["num_reads"]
@@ -64,6 +67,7 @@ def main():
                 if len(sample.constraints(only_broken=True)) == 0:
                     success_num += 1
             result_map[w_desire, w_group] = success_num
+            logger.info(f"Success Number = {success_num}")
 
     result_map_percent = result_map / parameter.config["num_reads"]
 

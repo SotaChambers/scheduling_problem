@@ -74,9 +74,15 @@ def main():
             if len(sample.constraints(only_broken=True)) == 0:
                 success_num += 1
         result_list.append(success_num)
-        min_energy_list.append(np.min(sampleset.energies))
-        mean_energy_list.append(np.mean(sampleset.energies))
-        max_energy_list.append(np.max(sampleset.energies))
+        if parameter.config["algorithm"] == "SQA":
+            min_energy_list.append(np.min(sampleset.energies))
+            mean_energy_list.append(np.mean(sampleset.energies))
+            max_energy_list.append(np.max(sampleset.energies))
+        else:
+            energies = np.array([sample[1] for sample in sampleset.record])
+            min_energy_list.append(np.min(energies))
+            mean_energy_list.append(np.mean(energies))
+            max_energy_list.append(np.max(energies))
 
     result_list_percent = [i / parameter.config["num_reads"] for i in result_list]
 
